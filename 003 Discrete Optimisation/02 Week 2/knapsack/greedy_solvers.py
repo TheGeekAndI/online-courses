@@ -1,5 +1,5 @@
 """
-The solver class contains the different solvers for the knapsack problem
+The greedy solver class contains the different greedy solvers for the knapsack problem
 """
 from collections import namedtuple
 import pandas as pd
@@ -121,8 +121,5 @@ class Greedy_solvers(object):
             results.append(solver(items, capacity))
         # sort by best objective value
         sorted_results = sorted(results, key=itemgetter("obj"), reverse=True)
-        # construct the requested output format
-        output_data = str(sorted_results[0]["obj"]) + " " + sorted_results[0]["opt"] + '\n'
-        output_data += sorted_results[0]["decision"] + '\n'
-        # output_data += sorted_results[0]["solver"]
-        return output_data
+        # return the best result to the overall list
+        return sorted_results[0]

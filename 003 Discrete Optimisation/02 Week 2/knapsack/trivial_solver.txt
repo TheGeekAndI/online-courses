@@ -17,3 +17,9 @@
     # output_data = str(value) + ' ' + str(0) + '\n'
     # output_data += ' '.join(map(str, taken))
     # return output_data
+
+
+    # construct the requested output format
+        output_data = str(sorted_results[0]["obj"]) + " " + sorted_results[0]["opt"] + '\n'
+        output_data += sorted_results[0]["decision"] + '\n'
+        # output_data += sorted_results[0]["solver"]

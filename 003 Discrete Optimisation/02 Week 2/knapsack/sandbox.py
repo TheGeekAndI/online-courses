@@ -7,6 +7,8 @@ Created on Wed Nov  8 08:31:00 2017
 from collections import namedtuple
 from operator import attrgetter, itemgetter
 import pprint
+import numpy as np
+import pandas as pd
 
 #%%
 def iter_named_tuples( df):
@@ -122,4 +124,18 @@ results
         
     # return the best solution
     
+#%%
+
+def populate_dynamic_table(items, capacity):
+    # convert the tupes into a table so the information can be easily retrieved
+    df_items = pd.DataFrame(items, columns=['index', 'value', 'weight'])
+    df_items.set_index("index", inplace=True)
+    values = df_items["value"]
+    weights = df_items["weight"]
+    # initalise a numpy array of zeros with rows = capacity and colums = items +1
+    space = pd.DataFrame(np.zeros((capacity+1, len(items)+1), dtype=np.int))
     
+    # iterate over each column from 1 and each row
+    for i in range(1, len(space.columns)):
+        for j in range(0, len(space)):
+        
