@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from collections import namedtuple
+from v_w_ratio_solver import V_w_solver
+# import pprint
+
 Item = namedtuple("Item", ['index', 'value', 'weight'])
+
 
 def solve_it(input_data):
     # Modify this code to run your optimization algorithm
@@ -21,22 +25,16 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    # a trivial greedy algorithm for filling the knapsack
-    # it takes items in-order until the knapsack is full
-    value = 0
-    weight = 0
-    taken = [0]*len(items)
+    ### solve the knapsack problem with the value/weight ratio solver ###
 
-    for item in items:
-        if weight + item.weight <= capacity:
-            taken[item.index] = 1
-            value += item.value
-            weight += item.weight
+    # create a value weight ratio solver object
+    vws = V_w_solver(items, capacity)
     
-    # prepare the solution in the specified output format
-    output_data = str(value) + ' ' + str(0) + '\n'
-    output_data += ' '.join(map(str, taken))
-    return output_data
+    # reorder the items by value weight ratio
+    vws.items = vws.value_per_weight()
+    
+    # solve by greedy on value weight ratio
+    return vws.solve_by_v_w_ratio()
 
 
 if __name__ == '__main__':
