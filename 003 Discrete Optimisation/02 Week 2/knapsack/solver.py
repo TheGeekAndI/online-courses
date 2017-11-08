@@ -3,7 +3,10 @@
 
 from collections import namedtuple
 from greedy_solvers import Greedy_solvers
+from dynamic_prog_solver import Dynamic_solvers
+from operator import itemgetter
 import pprint
+
 
 Item = namedtuple("Item", ['index', 'value', 'weight'])
 
@@ -25,14 +28,31 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    ### solve the knapsack problem with greedy solvers ###
+    
+    ### Solve the problem with all available solvers ###
 
+    # intialise a list where the best result from each solver type is stored
+    results = []
+    
+    ### solve the knapsack problem with greedy solvers ###
     # create a greedy solver object
     gs = Greedy_solvers()
-    
     # solve with all greedy solvers
-    return gs.solve(items, capacity)
+    results.append(gs.solve(items, capacity))
 
+    ### solve the knapsack problem with dynamic programmins solvers ###
+    # create a dp solver object
+    dps = Dynamic_solvers()
+    # solve will all available dp solvers
+    results.append(dps.solve(items, capacity))
+
+    # sort the results by the objective function and pick the best one
+    sorted_results = sorted(results, key=itemgetter("obj"), reverse=True)
+    # create the required output by the submitter
+    output_data = str(sorted_results[0]["obj"]) + " " + sorted_results[0]["opt"] + '\n'
+    output_data += sorted_results[0]["decision"] + '\n'
+    
+    return output_data
 
 if __name__ == '__main__':
     import sys
