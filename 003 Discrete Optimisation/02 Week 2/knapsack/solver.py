@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from collections import namedtuple
-from v_w_ratio_solver import V_w_solver
-# import pprint
+from greedy_solvers import Greedy_solvers
+import pprint
 
 Item = namedtuple("Item", ['index', 'value', 'weight'])
 
@@ -25,16 +25,13 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    ### solve the knapsack problem with the value/weight ratio solver ###
+    ### solve the knapsack problem with greedy solvers ###
 
-    # create a value weight ratio solver object
-    vws = V_w_solver(items, capacity)
+    # create a greedy solver object
+    gs = Greedy_solvers()
     
-    # reorder the items by value weight ratio
-    vws.items = vws.value_per_weight()
-    
-    # solve by greedy on value weight ratio
-    return vws.solve_by_v_w_ratio()
+    # solve with all greedy solvers
+    return gs.solve(items, capacity)
 
 
 if __name__ == '__main__':
