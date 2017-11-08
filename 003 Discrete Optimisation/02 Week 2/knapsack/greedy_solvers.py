@@ -3,7 +3,7 @@ The solver class contains the different solvers for the knapsack problem
 """
 from collections import namedtuple
 import pandas as pd
-# import pprint
+import pprint
 from operator import attrgetter, itemgetter
 
 
@@ -65,9 +65,10 @@ class Greedy_solvers(object):
                 # print("current weight: {w}; current value: {v}".format(w=weight, v=value))
 
         # prepare the solution in the specified output format
-        dct_output_data = {"obj": str(value),
+        dct_output_data = {"obj": int(value),
                            "opt": str(0),
-                           "decision": ' '.join(map(str, taken))}
+                           "decision": ' '.join(map(str, taken)),
+                           "solver": "ratio"}
         return dct_output_data
 
     def sort_by_weight(self, items):
@@ -98,9 +99,10 @@ class Greedy_solvers(object):
                 # print("current weight: {w}; current value: {v}".format(w=weight, v=value))
         
         # prepare the solution in the specified output format
-        dct_output_data = {"obj": str(value),
+        dct_output_data = {"obj": int(value),
                            "opt": str(0),
-                           "decision": ' '.join(map(str, taken))}
+                           "decision": ' '.join(map(str, taken)),
+                           "solver": "weight"}
         return dct_output_data
 
     def solve(self, items, capacity):
@@ -120,6 +122,7 @@ class Greedy_solvers(object):
         # sort by best objective value
         sorted_results = sorted(results, key=itemgetter("obj"), reverse=True)
         # construct the requested output format
-        output_data = sorted_results[0]["obj"] + " " + sorted_results[0]["opt"] + '\n'
-        output_data += sorted_results[0]["decision"]
+        output_data = str(sorted_results[0]["obj"]) + " " + sorted_results[0]["opt"] + '\n'
+        output_data += sorted_results[0]["decision"] + '\n'
+        # output_data += sorted_results[0]["solver"]
         return output_data
