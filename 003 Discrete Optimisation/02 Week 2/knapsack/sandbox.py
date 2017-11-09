@@ -9,6 +9,7 @@ from operator import attrgetter, itemgetter
 import pprint
 import numpy as np
 import pandas as pd
+import psutil
 
 #%%
 def iter_named_tuples( df):
@@ -139,3 +140,38 @@ def populate_dynamic_table(items, capacity):
     for i in range(1, len(space.columns)):
         for j in range(0, len(space)):
         
+#%%
+print((psutil.virtual_memory().available))
+print((psutil.virtual_memory().available)*.9)
+
+required_mem = (len(items)+1)*(capacity+1)*8
+
+if psutil.virtual_memory().available < required_mem:
+    print("good")
+#%%
+
+dps_result = None
+
+if dps_result:
+    print("Append")
+#else:
+#    print("Dont")
+#%%
+
+import itertools
+    # find all permutations of decision vector and store in a list
+decision_options = []
+[decision_options.append(seq) for seq in itertools.product([0,1], repeat=len(items))]
+lst_decisions_options = [list(elem) for elem in decision_options]
+
+
+
+
+    # for each element in the list
+        # iterate through each element of the vector:
+            # sum the weight of the vector
+            # if the weight of the vector exceeds capacity drop the branch
+            # else calculate the value
+
+            # if the value is less than the current best value drop the branch
+            # otherwise update the max value

@@ -4,6 +4,7 @@ The greedy solver class contains the different greedy solvers for the knapsack p
 from collections import namedtuple
 import pandas as pd
 from operator import attrgetter, itemgetter
+import time
 
 
 class Greedy_solvers(object):
@@ -19,6 +20,7 @@ class Greedy_solvers(object):
     def iter_named_tuples(self, df):
         """
         Helper function to create named tuples from a dataframe
+
         Returns a named tuple with the column names of the dataframe
         """
         Row = namedtuple('Item', df.columns)
@@ -28,6 +30,7 @@ class Greedy_solvers(object):
     def sort_by_value_per_weight(self, items):
         """
         Calculates the value per unit of weight for each item
+
         Returns ordered list of tuples by value/weight ratio
         """
         # convert tuples into dataframe to vectorise calculations
@@ -46,6 +49,7 @@ class Greedy_solvers(object):
     def solve_by_v_w_ratio(self, items, capacity):
         """
         Greedy solver by value per weight ratio
+
         Returns the solution in in a dictionary with the
         required items of the course
         """
@@ -57,22 +61,28 @@ class Greedy_solvers(object):
         weight = 0
         taken = [0]*len(items)
 
+        # time algorithm
+        start_t = time.time()
         for item in items:
             if weight + item.weight <= capacity:
                 taken[item.index] = 1
                 value += item.value
                 weight += item.weight
 
+        # calculate time required in hours
+        duration = (time.time() - start_t)/3600.0
         # prepare the solution in the specified output format
         dct_output_data = {"obj": int(value),
                            "opt": str(0),
                            "decision": ' '.join(map(str, taken)),
-                           "solver": "ratio"}
+                           "solver": "ratio",
+                           "time_h": duration}
         return dct_output_data
 
     def sort_by_weight(self, items):
         """
-        Sorts the items by weight
+        Sorts the items by weight.
+
         Returns ordered list of tuples by weight
         """
         return sorted(items, key=attrgetter("weight"), reverse=False)
@@ -80,34 +90,41 @@ class Greedy_solvers(object):
     def solve_by_weight(self, items, capacity):
         """
         Greedy solver by weight of the items
-        Returns the solution in in a dictionary with the 
+
+        Returns the solution in in a dictionary with the
         required items of the course
         """
         # sort the items by wieght
         items = self.sort_by_weight(items)
-        
+
         # run the greedy solver
         value = 0
         weight = 0
         taken = [0]*len(items)
         
+        # time algorithm
+        start_t = time.time()
         for item in items:
             if weight + item.weight <= capacity:
                 taken[item.index] = 1
                 value += item.value
                 weight += item.weight
 
+        # calculate time required in hours
+        duration = (time.time() - start_t)/3600.0
         # prepare the solution in the specified output format
         dct_output_data = {"obj": int(value),
                            "opt": str(0),
                            "decision": ' '.join(map(str, taken)),
-                           "solver": "weight"}
+                           "solver": "weight",
+                           "time_h": duration}
         return dct_output_data
 
     def solve(self, items, capacity):
         """
         Solves the optimisation with all available solvers and keeps
         the best value.
+
         Returns the best output for the data set in the required format
         """
         # create list of greedy solvers

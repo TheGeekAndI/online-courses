@@ -4,8 +4,9 @@
 from collections import namedtuple
 from greedy_solvers import Greedy_solvers
 from dynamic_prog_solver import Dynamic_solvers
+from least_discrepancy_solver import Lds_solvers
 from operator import itemgetter
-# import pprint
+import pprint
 
 
 Item = namedtuple("Item", ['index', 'value', 'weight'])
@@ -49,6 +50,17 @@ def solve_it(input_data):
     if dps_result:
         results.append(dps_result)
 
+    # ### solve the knapsack problem with least discrepancy search
+    lds = Lds_solvers()
+    # solve with all available solvers in the group:
+    # currently best_estimate relaxation and non-integrality relaxation
+    lds_result = lds.solve(items, capacity)
+    # only append results if it is not none so that the sorting step works
+    # correctly
+    if lds_result:
+        results.append(lds_result)
+
+    pprint.pprint(results)
     # sort the results by the objective function and pick the best one
     sorted_results = sorted(results, key=itemgetter("obj"), reverse=True)
     # create the required output by the submitter
