@@ -26,16 +26,7 @@ class Dynamic_solvers(object):
         # and colums = items +1
         space = np.zeros((max_capacity+1, len(items)+1), dtype=np.int)
         # iterate over each column from 1 and each row
-        
-        # set the start of the kill switch so that if it runs longer than
-        # 5h break out of the function
-        kill_start = time.time()
-
         for item in range(1, np.shape(space)[1]):
-            # check for timeout
-            if time.time() - kill_start >= 1.0:
-                break
-
             for capacity in range(1, np.shape(space)[0]):
                 # if the weight of the current item is less than the
                 # capacity populate the value of the item
@@ -86,10 +77,10 @@ class Dynamic_solvers(object):
         value, taken = self.traceback(items, space)
 
         # calculate time required in hours
-        duration = (time.time() - start_t)
+        duration = (time.time() - start_t)/3600.0
 
         dct_output_data = {"obj": int(value),
-                           "opt": str(0),
+                           "opt": str(1),
                            "decision": ' '.join(map(str, taken)),
                            "solver": "dp",
                            "time_h": duration}
@@ -107,7 +98,8 @@ class Dynamic_solvers(object):
         mem_required = (len(items)+1)*(capacity+1)*8.0
 
         # exit this solver if memory is likely to run out
-        if (psutil.virtual_memory().available)*0.9 < mem_required:
+        if (((len(items)+1) * (capacity+1)) > 10000000)\
+                or ((psutil.virtual_memory().available)*0.9 < mem_required):
             return
 
         # create list of greedy solvers

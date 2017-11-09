@@ -76,7 +76,8 @@ class Greedy_solvers(object):
                            "opt": str(0),
                            "decision": ' '.join(map(str, taken)),
                            "solver": "ratio",
-                           "time_h": duration}
+                           "time_h": duration,
+                           "weight": weight}
         return dct_output_data
 
     def sort_by_weight(self, items):

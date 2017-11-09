@@ -2,8 +2,9 @@
 Least discrepancy optimiser
 """
 import itertools
-from operator import itemgetter
+from operator import itemgetter, attrgetter
 import time
+import pandas as pd
 
 
 class Lds_solvers(object):
@@ -15,19 +16,54 @@ class Lds_solvers(object):
     def __init__(self):
         self.type = "LDS"
 
+    def no_capacity_constraint_estimate(self, items, capacity):
+        """
+        Calculates the best estimate if there are no constraints to
+        the capacity.
+
+        Returns a float with the best estimate value
+        """
+        return sum([item.value for item in items])
+
+    def non_int_relaxation_estimate(self, items, capacity):
+        """
+        Calculates the best estimate if there are no constraints to
+        the capacity.
+
+        Returns a float with the best estimate value
+        """
+        value = 0
+        weight = 0
+        taken = [0]*len(items)
+        for item in items:
+            if weight + item.weight <= capacity:
+                taken[item.index] = 1
+                value += item.value
+                weight += item.weight
+            else:
+                remainder = capacity - weight
+                fraction = remainder / weight
+                value += item.value * fraction
+
+        return value
+
     def lds_best_estimate_solver(self, items, capacity):
         """
         Least discrepancy optimisation solver based on the items
         and capacity provided.
 
-        Returns the solution in in a dictionary with the 
+        Returns the solution in in a dictionary with the
         required items of the course.
         """
         best_value = 0
         best_decision = []
+        estimate = self.no_capacity_constraint_estimate(items, capacity)
 
         # time algorithm
         start_t = time.time()
+
+        # sort items by value to truncate sooner
+        items = sorted(items, key=attrgetter("value"), reverse=True)
 
         # create a possible permutation of the decision vector at a time
         for decision_option in itertools.product([1, 0], repeat=len(items)):
@@ -35,11 +71,11 @@ class Lds_solvers(object):
             lst_decision_option = [(elem) for elem in decision_option]
 
             # best estimate relaxation
-            best_estimate = sum([item.value for item in items])
+            best_estimate = estimate
 
             filled_weight = 0
             filled_value = 0
-            
+
             # iterate over each item in the possible decision vector
             # so that the tree can be pruned as soon as the best estimate
             # is less than the best identified value
@@ -55,18 +91,30 @@ class Lds_solvers(object):
 
                 if filled_weight > capacity or best_estimate < best_value:
                     break
-                
+
                 if item+1 == len(items) and filled_weight <= capacity\
                         and filled_value > best_value:
                             best_value = filled_value
                             best_decision = lst_decision_option
-        
+
         # calculate time required in hours
         duration = (time.time() - start_t)/3600.0
 
+        # find the original item indexes to create the correct decision vector
+        df = pd.DataFrame({"decision": best_decision})
+        lst = []
+        for idx, row in df.iterrows():
+            lst.append(items[idx].index)
+
+        df["o_index"] = lst
+        df.set_index("o_index", inplace=True)
+        df.sort_index(inplace=True)
+
+        best_decision = df.decision.tolist()
+
         # prepare the solution in the specified output format
         dct_output_data = {"obj": int(best_value),
-                           "opt": str(1),
+                           "opt": str(0),
                            "decision": ' '.join(map(str, best_decision)),
                            "solver": "lds_best_est",
                            "time_h": duration}
@@ -80,6 +128,8 @@ class Lds_solvers(object):
         Returns the solution in in a dictionary with the
         required items of the course.
         """
+        estimate = self.non_int_relaxation_estimate(items, capacity)
+
         best_value = 0
         best_decision = []
 
@@ -92,11 +142,11 @@ class Lds_solvers(object):
             lst_decision_option = [(elem) for elem in decision_option]
 
             # best estimate relaxation
-            best_estimate = sum([item.value for item in items])
+            best_estimate = estimate
 
             filled_weight = 0
             filled_value = 0
-            
+
             # iterate over each item in the possible decision vector
             # so that the tree can be pruned as soon as the best estimate
             # is less than the best identified value
@@ -112,12 +162,12 @@ class Lds_solvers(object):
 
                 if filled_weight > capacity or best_estimate < best_value:
                     break
-                
+
                 if item+1 == len(items) and filled_weight <= capacity\
                         and filled_value > best_value:
                             best_value = filled_value
                             best_decision = lst_decision_option
-        
+
         # calculate time required in hours
         duration = (time.time() - start_t)/3600.0
 
