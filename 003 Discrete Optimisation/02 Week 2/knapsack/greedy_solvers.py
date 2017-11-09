@@ -3,7 +3,6 @@ The greedy solver class contains the different greedy solvers for the knapsack p
 """
 from collections import namedtuple
 import pandas as pd
-import pprint
 from operator import attrgetter, itemgetter
 
 
@@ -47,7 +46,8 @@ class Greedy_solvers(object):
     def solve_by_v_w_ratio(self, items, capacity):
         """
         Greedy solver by value per weight ratio
-        Returns the solution in in a dictionary with the required items of the course
+        Returns the solution in in a dictionary with the
+        required items of the course
         """
         # sort the items by value/weight ratio
         items = self.sort_by_value_per_weight(items)
@@ -62,7 +62,6 @@ class Greedy_solvers(object):
                 taken[item.index] = 1
                 value += item.value
                 weight += item.weight
-                # print("current weight: {w}; current value: {v}".format(w=weight, v=value))
 
         # prepare the solution in the specified output format
         dct_output_data = {"obj": int(value),
@@ -81,7 +80,8 @@ class Greedy_solvers(object):
     def solve_by_weight(self, items, capacity):
         """
         Greedy solver by weight of the items
-        Returns the solution in in a dictionary with the required items of the course
+        Returns the solution in in a dictionary with the 
+        required items of the course
         """
         # sort the items by wieght
         items = self.sort_by_weight(items)
@@ -96,8 +96,7 @@ class Greedy_solvers(object):
                 taken[item.index] = 1
                 value += item.value
                 weight += item.weight
-                # print("current weight: {w}; current value: {v}".format(w=weight, v=value))
-        
+
         # prepare the solution in the specified output format
         dct_output_data = {"obj": int(value),
                            "opt": str(0),
@@ -107,7 +106,8 @@ class Greedy_solvers(object):
 
     def solve(self, items, capacity):
         """
-        Solves the optimisation with all available solvers and keeps the best value
+        Solves the optimisation with all available solvers and keeps
+        the best value.
         Returns the best output for the data set in the required format
         """
         # create list of greedy solvers
@@ -115,7 +115,8 @@ class Greedy_solvers(object):
             self.solve_by_weight,
             self.solve_by_v_w_ratio]
         # iterate through each solver
-        # keep the results of each solver in a list of dictionaries so that it can be sorted
+        # keep the results of each solver in a list of dictionaries so
+        # that it can be sorted
         results = []
         for solver in lst_greedy_solvers:
             results.append(solver(items, capacity))
