@@ -5,7 +5,7 @@ from collections import namedtuple
 from greedy_solvers import Greedy_solvers
 from dynamic_prog_solver import Dynamic_solvers
 from operator import itemgetter
-import pprint
+# import pprint
 
 
 Item = namedtuple("Item", ['index', 'value', 'weight'])
@@ -28,31 +28,36 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    
-    ### Solve the problem with all available solvers ###
+    # ### Solve the problem with all available solvers ###
 
     # intialise a list where the best result from each solver type is stored
     results = []
-    
-    ### solve the knapsack problem with greedy solvers ###
+
+    # ### solve the knapsack problem with greedy solvers ###
     # create a greedy solver object
     gs = Greedy_solvers()
     # solve with all greedy solvers
     results.append(gs.solve(items, capacity))
 
-    ### solve the knapsack problem with dynamic programmins solvers ###
+    # ### solve the knapsack problem with dynamic programmins solvers ###
     # create a dp solver object
     dps = Dynamic_solvers()
-    # solve will all available dp solvers
-    results.append(dps.solve(items, capacity))
+    # solve will all available dp solvers if enough memory is available
+    dps_result = dps.solve(items, capacity)
+    # only append results if it is not none so that the sorting step works
+    # correctly
+    if dps_result:
+        results.append(dps_result)
 
     # sort the results by the objective function and pick the best one
     sorted_results = sorted(results, key=itemgetter("obj"), reverse=True)
     # create the required output by the submitter
-    output_data = str(sorted_results[0]["obj"]) + " " + sorted_results[0]["opt"] + '\n'
+    output_data = str(sorted_results[0]["obj"]) + " "\
+        + sorted_results[0]["opt"] + '\n'
     output_data += sorted_results[0]["decision"] + '\n'
-    
+
     return output_data
+
 
 if __name__ == '__main__':
     import sys
@@ -62,5 +67,6 @@ if __name__ == '__main__':
             input_data = input_data_file.read()
         print(solve_it(input_data))
     else:
-        print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/ks_4_0)')
-
+        print("This test requires an input file. "
+              "Please select one from the data directory. "
+              "(i.e. python solver.py ./data/ks_4_0)")

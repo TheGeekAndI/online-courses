@@ -3,6 +3,7 @@ The dynamic programming solver class contains the dynamic programming solver
 """
 import numpy as np
 from operator import itemgetter
+import psutil
 
 
 class Dynamic_solvers(object):
@@ -71,11 +72,16 @@ class Dynamic_solvers(object):
 
     def solve(self, items, capacity):
         """
-        Solves the optimisation with all available solvers and keeps the best value
-        Returns the best output for the data set in the required format
+        Solves the optimisation with all available solvers and keeps the best
+        value Returns the best output for the data set in the required format
         """
-        #TODO:
-        #- check if memory runs out, if yes dont do this solver
+        # check if memory runs out, if yes dont do this solver
+        # calculate memory required
+        mem_required = (len(items)+1)*(capacity+1)*8.0
+        
+        # exit this solver if memory is likely to run out
+        if (psutil.virtual_memory().available)*0.9 < mem_required:
+            return
 
         # create list of greedy solvers
         lst_dp_solvers = [
