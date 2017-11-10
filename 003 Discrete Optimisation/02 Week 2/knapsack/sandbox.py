@@ -180,6 +180,57 @@ for decision_vector in lst_decisions_options:
             # if the value is less than the current best value drop the branch
             # otherwise update the max value
 #%%
+import itertools
+import timeit
+
+def myfunc(items):
+    for decision_option in itertools.product([1,0], repeat=items):
+        pass
+    # unpack the tuple in to a list so it can be iterated
+#        lst_decision_option = [(elem) for elem in decision_option]
+
+def wrapper(func, *args, **kwargs):
+    def wrapped():
+        return func(*args, **kwargs)
+    return wrapped
+i = 6
+for i in range(2, 26):
+    wrapped = wrapper(myfunc, i)
+    print(i, timeit.timeit(wrapped, number = 1))
+
+def mysubfunc(decision_option):
+    lst_decision_option = [(elem) for elem in decision_option]
+d = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+wrapped2 = wrapper(mysubfunc, d)
+print(timeit.timeit(wrapped2))
+
+#%%
+import numpy
+import itertools
+import timeit
+
+some_list = [1,0]
+some_length = 25
+
+#print(numpy.array(list(itertools.product(some_list, repeat=some_length))))
+
+#print("---")
+def myfunc(some_list, some_length):
+    n = numpy.array(some_list)[numpy.rollaxis(
+            numpy.indices((len(some_list),) * some_length), 0, some_length + 1)
+            .reshape(-1, some_length)]
+        
+def wrapper(func, *args, **kwargs):
+    def wrapped():
+        return func(*args, **kwargs)
+    return wrapped
+wrapped = wrapper(myfunc, some_list, some_length)
+print(timeit.timeit(wrapped, number=1))
+
+#%%
+
+
+#%%
 from operator import attrgetter
 import itertools
 import pprint
@@ -192,8 +243,11 @@ best_decision = []
 # sort items by value to truncate sooner
 items = sorted(items, key=attrgetter("value"), reverse=True)
 current_running_time = 0
+
+do_start = time.time()
 for decision_option in itertools.product([1,0], repeat=len(items)):
-    do_start = time.time()
+    current_running_time += time.time()- do_start
+    print("current running time is {s} seconds".format(s=current_running_time))   
     # unpack the tuple in to a list so it can be iterated
     lst_decision_option = [(elem) for elem in decision_option]
     #
@@ -202,7 +256,6 @@ for decision_option in itertools.product([1,0], repeat=len(items)):
     max_estimate = sum([item.value for item in items])
     
     for item, decision in enumerate(lst_decision_option):
-        search_loop_st = time.time()
         if decision > 0:
             filled_weight += items[item].weight
             filled_value += items[item].value
@@ -216,8 +269,7 @@ for decision_option in itertools.product([1,0], repeat=len(items)):
         and filled_value > best_value:
             best_value = filled_value
             best_decision = lst_decision_option
-        current_running_time += time.time()-search_loop_st
-        print("current running time is {s} seconds".format(s=current_running_time))
+    
 # the best decision contains the indexes of the sorted list.
 # from the list index you can find the original index in the named tuple
 # and rewrite the decision
@@ -292,3 +344,128 @@ for item in items2:
     
 print(weight)
 print(value)
+
+#%%
+class Node:
+
+      def __init__(self,info): #constructor of class
+
+          self.info = info  #information for node
+          self.left = None  #left leef
+          self.right = None #right leef
+          self.level = None #level none defined
+
+      def __str__(self):
+
+          return str(self.info) #return as string
+
+
+class searchtree:
+
+      def __init__(self): #constructor of class
+
+          self.root = None
+
+
+      def create(self,val):  #create binary search tree nodes
+
+          if self.root == None:
+
+             self.root = Node(val)
+
+          else:
+
+             current = self.root
+
+             while 1:
+
+                 if val < current.info:
+
+                   if current.left:
+                      current = current.left
+                   else:
+                      current.left = Node(val)
+                      break;      
+
+                 elif val > current.info:
+                 
+                    if current.right:
+                       current = current.right
+                    else:
+                       current.right = Node(val)
+                       break;      
+
+                 else:
+                    break 
+
+      def bft(self): #Breadth-First Traversal
+
+          self.root.level = 0 
+          queue = [self.root]
+          out = []
+          current_level = self.root.level
+
+          while len(queue) > 0:
+                 
+             current_node = queue.pop(0)
+ 
+             if current_node.level > current_level:
+                current_level += 1
+                out.append("\n")
+
+             out.append(str(current_node.info) + " ")
+
+             if current_node.left:
+
+                current_node.left.level = current_level + 1
+                queue.append(current_node.left)
+                  
+
+             if current_node.right:
+
+                current_node.right.level = current_level + 1
+                queue.append(current_node.right)
+                      
+                 
+          print("".join(out))   
+
+
+      def inorder(self,node):
+            
+           if node is not None:
+              
+              self.inorder(node.left)
+              print(node.info)
+              self.inorder(node.right)
+
+
+      def preorder(self,node):
+            
+           if node is not None:
+              
+              print(node.info)
+              self.preorder(node.left)
+              self.preorder(node.right)
+
+
+      def postorder(self,node):
+            
+           if node is not None:
+              
+              self.postorder(node.left)
+              self.postorder(node.right)
+              print(node.info)
+
+                        
+tree = searchtree()     
+arr = [8,3,1,6,4,7,10,14,13]
+for i in arr:
+    tree.create(i)
+print('Breadth-First Traversal')
+tree.bft()
+print('Inorder Traversal')
+tree.inorder(tree.root) 
+print('Preorder Traversal')
+tree.preorder(tree.root) 
+print('Postorder Traversal')
+tree.postorder(tree.root)

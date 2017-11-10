@@ -60,7 +60,6 @@ def solve_it(input_data):
     if lds_result:
         results.append(lds_result)
 
-    pprint.pprint(results)
     # sort the results by the objective function and pick the best one
     sorted_results = sorted(results, key=itemgetter("obj"), reverse=True)
     # create the required output by the submitter

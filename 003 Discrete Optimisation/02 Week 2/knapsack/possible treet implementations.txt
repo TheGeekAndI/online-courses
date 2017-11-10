@@ -1,0 +1,3 @@
+https://stackoverflow.com/questions/36027841/python-create-a-binary-search-tree-using-a-list
+
+https://gist.github.com/thinkphp/1450738
