@@ -469,3 +469,12 @@ print('Preorder Traversal')
 tree.preorder(tree.root) 
 print('Postorder Traversal')
 tree.postorder(tree.root)
+
+#%%
+
+class Node:
+    """
+    Each node is the currently defined state of the decision variable
+    """
+    
+    
